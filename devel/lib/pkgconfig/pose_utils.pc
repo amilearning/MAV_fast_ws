@@ -1,0 +1,8 @@
+prefix=/home/hojin/drone_ws2/fast_ws/devel
+
+Name: pose_utils
+Description: Description of pose_utils
+Version: 0.0.0
+Cflags: -I/home/hojin/drone_ws2/fast_ws/src/Fast-Planner/uav_simulator/Utils/pose_utils/include
+Libs: -L${prefix}/lib -lpose_utils
+Requires: 
