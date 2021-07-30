@@ -264,20 +264,20 @@ void cmdCallback(const ros::TimerEvent& e) {
 
   last_yaw_ = cmd.yaw;
 
-  double distFromOdom = sqrt(pow((odom.pose.pose.position.x -cmd.position.x),2)  +pow((odom.pose.pose.position.y -cmd.position.y),2)  +pow((odom.pose.pose.position.z -cmd.position.z),2));
+  // double distFromOdom = sqrt(pow((odom.pose.pose.position.x -cmd.position.x),2)  +pow((odom.pose.pose.position.y -cmd.position.y),2)  +pow((odom.pose.pose.position.z -cmd.position.z),2));
   
-  if(distFromOdom > 0.5){
-    const double time_out = 0.01;
-    ros::Time time_now = ros::Time::now();
-    double t_stop = (time_now - start_time_).toSec() + time_out;
-    traj_duration_ = min(t_stop, traj_duration_);
-    // ROS_INFO("replan by odom");
-    return;
-  }else{
-    pos_cmd_pub.publish(cmd);
-  }
+  // if(distFromOdom > 0.5){
+  //   const double time_out = 0.01;
+  //   ros::Time time_now = ros::Time::now();
+  //   double t_stop = (time_now - start_time_).toSec() + time_out;
+  //   traj_duration_ = min(t_stop, traj_duration_);
+  //   // ROS_INFO("replan by odom");
+  //   return;
+  // }else{
+  //   pos_cmd_pub.publish(cmd);
+  // }
   
-
+  pos_cmd_pub.publish(cmd);
   // draw cmd
 
   // drawCmd(pos, vel, 0, Eigen::Vector4d(0, 1, 0, 1));

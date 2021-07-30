@@ -199,11 +199,11 @@ void KinoReplanFSM::execFSMCallback(const ros::TimerEvent& e) {
         changeFSMExecState(REPLAN_TRAJ, "FSM");
       }
 
-      double distFromOdom = sqrt(pow((odom_pos_(0) -pos(0)),2)  +pow((odom_pos_(1) -pos(1)),2)  +pow((odom_pos_(2) -pos(2)),2));
-      if(distFromOdom > 0.2){
-        changeFSMExecState(GEN_NEW_TRAJ, "FSM");
-        ROS_INFO("odom replan");
-      }
+      // double distFromOdom = sqrt(pow((odom_pos_(0) -pos(0)),2)  +pow((odom_pos_(1) -pos(1)),2)  +pow((odom_pos_(2) -pos(2)),2));
+      // if(distFromOdom > 0.2){
+      //   changeFSMExecState(GEN_NEW_TRAJ, "FSM");
+      //   ROS_INFO("odom replan");
+      // }
       break;
     }
 

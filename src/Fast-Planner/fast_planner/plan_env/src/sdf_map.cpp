@@ -390,118 +390,12 @@ int SDFMap::setCacheOccupancy(Eigen::Vector3d pos, int occ) {
   return idx_ctns;
 }
 
-// void SDFMap::projectDepthImage() {
-//   // md_.proj_points_.clear();
-//   md_.proj_points_cnt = 0;
-
-//   uint16_t* row_ptr;
-//   // int cols = current_img_.cols, rows = current_img_.rows;
-//   int cols = md_.depth_image_.cols;
-//   int rows = md_.depth_image_.rows;
-
-//   double depth;
-
-//   Eigen::Matrix3d camera_r = md_.camera_q_.toRotationMatrix();
-
-//   // cout << "rotate: " << md_.camera_q_.toRotationMatrix() << endl;
-//   // std::cout << "pos in proj: " << md_.camera_pos_ << std::endl;
-
-//   if (!mp_.use_depth_filter_) {
-//     for (int v = 0; v < rows; v++) {
-//       row_ptr = md_.depth_image_.ptr<uint16_t>(v);
-
-//       for (int u = 0; u < cols; u++) {
-
-//         Eigen::Vector3d proj_pt;
-//         depth = (*row_ptr++) / mp_.k_depth_scaling_factor_;
-//         proj_pt(0) = (u - mp_.cx_) * depth / mp_.fx_;
-//         proj_pt(1) = (v - mp_.cy_) * depth / mp_.fy_;
-//         proj_pt(2) = depth;
-
-//         proj_pt = camera_r * proj_pt + md_.camera_pos_;
-
-//         if (u == 320 && v == 240) std::cout << "depth: " << depth << std::endl;
-//         md_.proj_points_[md_.proj_points_cnt++] = proj_pt;
-//       }
-//     }
-//   }
-//   /* use depth filter */
-//   else {
-
-//     if (!md_.has_first_depth_)
-//       md_.has_first_depth_ = true;
-//     else {
-//       Eigen::Vector3d pt_cur, pt_world, pt_reproj;
-
-//       Eigen::Matrix3d last_camera_r_inv;
-//       last_camera_r_inv = md_.last_camera_q_.inverse();
-//       const double inv_factor = 1.0 / mp_.k_depth_scaling_factor_;
-
-//       for (int v = mp_.depth_filter_margin_; v < rows - mp_.depth_filter_margin_; v += mp_.skip_pixel_) {
-//         row_ptr = md_.depth_image_.ptr<uint16_t>(v) + mp_.depth_filter_margin_;
-
-//         for (int u = mp_.depth_filter_margin_; u < cols - mp_.depth_filter_margin_;
-//              u += mp_.skip_pixel_) {
-
-//           depth = (*row_ptr) * inv_factor;
-//           row_ptr = row_ptr + mp_.skip_pixel_;
-
-//           // filter depth
-//           // depth += rand_noise_(eng_);
-//           // if (depth > 0.01) depth += rand_noise2_(eng_);
-
-//           if (*row_ptr == 0) {
-//             depth = mp_.max_ray_length_ + 0.1;
-//           } else if (depth < mp_.depth_filter_mindist_) {
-//             continue;
-//           } else if (depth > mp_.depth_filter_maxdist_) {
-//             depth = mp_.max_ray_length_ + 0.1;
-//           }
-
-//           // project to world frame
-//           pt_cur(0) = (u - mp_.cx_) * depth / mp_.fx_;
-//           pt_cur(1) = (v - mp_.cy_) * depth / mp_.fy_;
-//           pt_cur(2) = depth;
-
-//           pt_world = camera_r * pt_cur + md_.camera_pos_;
-//           // if (!isInMap(pt_world)) {
-//           //   pt_world = closetPointInMap(pt_world, md_.camera_pos_);
-//           // }
-
-//           md_.proj_points_[md_.proj_points_cnt++] = pt_world;
-
-//           // check consistency with last image, disabled...
-//           if (false) {
-//             pt_reproj = last_camera_r_inv * (pt_world - md_.last_camera_pos_);
-//             double uu = pt_reproj.x() * mp_.fx_ / pt_reproj.z() + mp_.cx_;
-//             double vv = pt_reproj.y() * mp_.fy_ / pt_reproj.z() + mp_.cy_;
-
-//             if (uu >= 0 && uu < cols && vv >= 0 && vv < rows) {
-//               if (fabs(md_.last_depth_image_.at<uint16_t>((int)vv, (int)uu) * inv_factor -
-//                        pt_reproj.z()) < mp_.depth_filter_tolerance_) {
-//                 md_.proj_points_[md_.proj_points_cnt++] = pt_world;
-//               }
-//             } else {
-//               md_.proj_points_[md_.proj_points_cnt++] = pt_world;
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   /* maintain camera pose for consistency check */
-
-//   md_.last_camera_pos_ = md_.camera_pos_;
-//   md_.last_camera_q_ = md_.camera_q_;
-//   md_.last_depth_image_ = md_.depth_image_;
-// }
 
 void SDFMap::raycastProcess() {
   // if (md_.proj_points_.size() == 0) return;
   if (md_.proj_points_cnt == 0) return;
   // if (!md_.has_odom_) return;
-  ROS_INFO("dd");
+  // ROS_INFO("dd");
   ros::Time t1, t2;
 
   md_.raycast_num_ += 1;
@@ -671,7 +565,7 @@ Eigen::Vector3d SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen:
 
 void SDFMap::clearAndInflateLocalMap() {
   /*clear outside local*/
-  ROS_INFO("dddddd");
+  // ROS_INFO("dddddd");
   const int vec_margin = 5;
   // Eigen::Vector3i min_vec_margin = min_vec - Eigen::Vector3i(vec_margin,
   // vec_margin, vec_margin); Eigen::Vector3i max_vec_margin = max_vec +
@@ -750,11 +644,11 @@ void SDFMap::clearAndInflateLocalMap() {
   Eigen::Vector3i inf_pt;
 
   // clear outdated data
-  // for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
-  //   for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y)
-  //     for (int z = md_.local_bound_min_(2); z <= md_.local_bound_max_(2); ++z) {
-  //       md_.occupancy_buffer_inflate_[toAddress(x, y, z)] = 0;
-  //     }
+  for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+    for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y)
+      for (int z = md_.local_bound_min_(2); z <= md_.local_bound_max_(2); ++z) {
+        md_.occupancy_buffer_inflate_[toAddress(x, y, z)] = 0;
+      }
 
   // inflate obstacles
   for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
@@ -782,21 +676,29 @@ void SDFMap::clearAndInflateLocalMap() {
     for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
       for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
         md_.occupancy_buffer_inflate_[toAddress(x, y, ceil_id)] = 1;
-        ROS_INFO("ceiling limit x = %f, y = %f, z = %f",x,y,ceil_id);
+        // ROS_INFO("ceiling limit x = %f, y = %f, z = %f",x,y,ceil_id);
       }
   }
-
+ // add ground to limit flight height
+      int ceil_id = floor((0 - mp_.map_origin_(2)) * mp_.resolution_inv_);
+    for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+      for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
+        //  for (int kk =0 ; kk < 2; ++kk){
+        //   int tmp = ceil_id + kk;
+            md_.occupancy_buffer_inflate_[toAddress(x, y, ceil_id)] = 1;     
+        // }   
+      }
   
 }
 
 void SDFMap::visCallback(const ros::TimerEvent& /*event*/) {
   publishMap();
   publishMapInflate(false);
-  publishUpdateRange();
-  publishESDF();
+  // publishUpdateRange();
+  // publishESDF();
 
-  publishUnknown();
-  publishDepth();
+  // publishUnknown();
+  // publishDepth();
 }
 
 void SDFMap::updateOccupancyCallback(const ros::TimerEvent& /*event*/) {
@@ -811,9 +713,17 @@ void SDFMap::updateOccupancyCallback(const ros::TimerEvent& /*event*/) {
   
   if (md_.local_updated_) {
     ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
+    ROS_INFO("local update ");
     clearAndInflateLocalMap();
   }
- 
+
   t2 = ros::Time::now();
 
   md_.fuse_time_ += (t2 - t1).toSec();
@@ -968,13 +878,30 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
   max_z = mp_.map_min_boundary_(2);
   //////////////////////////////////////////////////////////////////////////////////////
   // tranfrom point cloud from ** Lidar ** to world frame 
-  //////////////////////////////////////////////////////////////////////////////////////
-  lidar_sub_done = false;
+  //////////////////////////////////////////////////////////////////////////////////////  
   if(lidar_sub_done){
     pcl::PointCloud<pcl::PointXYZ> latest_lidar_cloud;
     pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud_tmp (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromROSMsg(pcd_from_lidar, *lidar_cloud_tmp);
 
+
+
+pcl::PointCloud<pcl::PointXYZ>::Ptr p_obstacles(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointIndices::Ptr inliers(new pcl::PointIndices());
+  pcl::ExtractIndices<pcl::PointXYZ> extract;
+  for (int i = 0; i < (*lidar_cloud_tmp).size(); i++)
+  {
+    pcl::PointXYZ pt(lidar_cloud_tmp->points[i].x, lidar_cloud_tmp->points[i].y, lidar_cloud_tmp->points[i].z);    
+    double point_yaw = atan2( pt.y ,pt.x);             
+    if (abs(point_yaw) < 0.4f) // e.g. remove all pts if it goes beyond FOV of camera 
+    { 
+      inliers->indices.push_back(i);
+    }
+  }
+  extract.setInputCloud(lidar_cloud_tmp);
+  extract.setIndices(inliers);
+  extract.setNegative(true);
+  extract.filter(*lidar_cloud_tmp);
 
     tf::StampedTransform lidar_to_world;
     try {
@@ -992,10 +919,10 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
     latest_lidar_cloud = *lidar_cloud_tmp;
 
 
-    
+    inf_step = ceil(mp_.obstacles_inflation_ / mp_.resolution_);
     for (size_t i = 0; i < latest_lidar_cloud.points.size(); ++i) {
       pt = latest_lidar_cloud.points[i]; 
-      for (double kk=-2.0; kk<1 ; kk=kk+0.2){      
+      for (double kk=-2.0; kk<2 ; kk=kk+0.2){      
           p3d(0) = pt.x, p3d(1) = pt.y, p3d(2) = pt.z+kk;            
           /* point inside update range */
           Eigen::Vector3d devi = p3d - md_.camera_pos_;
@@ -1004,7 +931,7 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
 
           if (fabs(devi(0)) < mp_.local_update_range_(0) && fabs(devi(1)) < mp_.local_update_range_(1) &&
               fabs(devi(2)) < mp_.local_update_range_(2)) {
-
+          
             /* inflate the point */
             for (int x = -inf_step; x <= inf_step; ++x)
               for (int y = -inf_step; y <= inf_step; ++y)
@@ -1034,14 +961,15 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
         }
     } 
   }
+inf_step = ceil(mp_.obstacles_inflation_ / mp_.resolution_);  
 
-  //////////////////////////////////////////////////////////////////////////////////////
-  // latest_cloud += latest_lidar_cloud; 
-  //////////////////////////////////////////////////////////////////////////////////////
 
   
+//////////////////////////////////////////////////////////////////////////////////////
+// latest_cloud += latest_lidar_cloud; 
+//////////////////////////////////////////////////////////////////////////////////////
 
-
+  
 //  for (size_t i = 0; i < latest_lidar_cloud.points.size(); ++i) {
 //     pt = latest_lidar_cloud.points[i];    
 //     for (int z_i = -1 ; z_i< 1;z_i = z_i+0.2){
@@ -1084,7 +1012,22 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
 //     }
    
 //   }
-
+ if (mp_.virtual_ceil_height_ > -0.5) {
+    int ceil_id = floor((mp_.virtual_ceil_height_ - mp_.map_origin_(2)) * mp_.resolution_inv_);
+    for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+      for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
+        md_.occupancy_buffer_inflate_[toAddress(x, y, ceil_id)] = 1;        
+      }
+  }
+ // add ground to limit flight height
+      int ceil_id = floor((0 - mp_.map_origin_(2)) * mp_.resolution_inv_);
+    for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+      for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
+        //  for (int kk =0 ; kk < 2; ++kk){
+        //   int tmp = ceil_id + kk;
+            md_.occupancy_buffer_inflate_[toAddress(x, y, ceil_id)] = 1;     
+        // }   
+      }
 
   for (size_t i = 0; i < latest_cloud.points.size(); ++i) {
     pt = latest_cloud.points[i];    
@@ -1127,13 +1070,25 @@ void SDFMap::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& img) {
     }
   }
 
-if (mp_.virtual_ceil_height_ > -0.5) {
-    int ceil_id = floor((mp_.virtual_ceil_height_ - mp_.map_origin_(2)) * mp_.resolution_inv_);
-    for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
-      for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
-        md_.occupancy_buffer_inflate_[toAddress(x, y, ceil_id)] = 1;        
-      }
-  }
+// if (mp_.virtual_ceil_height_ > -0.5) {
+//     int ceil_id = floor((mp_.virtual_ceil_height_ - mp_.map_origin_(2)) * mp_.resolution_inv_);
+//     for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+//       for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
+//         for (int kk =0 ; kk < 2; ++kk){
+//           int tmp = ceil_id + kk;
+//           md_.occupancy_buffer_inflate_[toAddress(x, y, tmp)] = 1;        
+//         }         
+//       }
+//   }
+// // fill up the ground 
+//     int ceil_id = floor((0 - mp_.map_origin_(2)) * mp_.resolution_inv_);
+//     for (int x = md_.local_bound_min_(0); x <= md_.local_bound_max_(0); ++x)
+//       for (int y = md_.local_bound_min_(1); y <= md_.local_bound_max_(1); ++y) {
+//          for (int kk =0 ; kk < 2; ++kk){
+//           int tmp = ceil_id + kk;
+//             md_.occupancy_buffer_inflate_[toAddress(x, y, tmp)] = 1;     
+//         }   
+//       }
 
   min_x = min(min_x, md_.camera_pos_(0));
   min_y = min(min_y, md_.camera_pos_(1));
